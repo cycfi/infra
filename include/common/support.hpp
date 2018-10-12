@@ -130,6 +130,8 @@ namespace cycfi
    class iterator_range
    {
    public:
+                  iterator_range()
+                   : _f(), _l() {}
                   iterator_range(Iterator f, Iterator l)
                    : _f(f), _l(l) {}
 
