@@ -122,31 +122,5 @@ namespace cycfi
    {
       return int_traits<T>::min;
    }
-
-   ////////////////////////////////////////////////////////////////////////////
-   // Iterator Range
-	////////////////////////////////////////////////////////////////////////////
-   template <typename Iterator>
-   class iterator_range
-   {
-   public:
-                  iterator_range()
-                   : _f(), _l() {}
-                  iterator_range(Iterator f, Iterator l)
-                   : _f(f), _l(l) {}
-
-      Iterator    begin() const  { return _f; }
-      Iterator    end() const    { return _l; }
-
-   private:
-
-      Iterator _f, _l;
-   };
-
-   template <typename Iterator>
-   inline iterator_range<Iterator> make_iterator_range(Iterator f, Iterator l)
-   {
-      return {f, l};
-   }
 }
 #endif
