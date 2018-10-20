@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include <type_traits>
 #include <common/assert.hpp>
 
 namespace cycfi
@@ -25,6 +26,14 @@ namespace cycfi
       using value_type = typename traits::value_type;
       using pointer = typename traits::pointer;
       using reference = typename traits::reference;
+
+      static_assert(
+         std::is_same<
+            typename traits::iterator_category
+          , std::random_access_iterator_tag
+         >::value
+       , "Random access iterator required"
+      );
 
                            iterator_range();
                            iterator_range(Iterator f, Iterator l);
@@ -49,11 +58,10 @@ namespace cycfi
 
       using sample_type = T;
 
-      audio_buffer(T* base, std::size_t num_channels, std::size_t size)
-         : _base(base)
-         , _num_channels(num_channels)
-         , _size(size)
-      {}
+                           audio_buffer(std::size_t num_channels, std::size_t size)
+                            : _num_channels(num_channels)
+                            , _size(size)
+                           {}
 
       iterator_range<T*>   operator[](std::size_t channel) const;
       std::size_t          num_channels() const { return _num_channels; }
@@ -61,7 +69,8 @@ namespace cycfi
 
    private:
 
-      T*                   _base;
+      virtual T*           get_channel(std::size_t channel) const = 0;
+
       std::size_t          _num_channels;
       std::size_t          _size;
    };
@@ -99,7 +108,7 @@ namespace cycfi
    inline iterator_range<T*>
    audio_buffer<T>::operator[](std::size_t channel) const
    {
-      T* start = _base + (channel * _size);
+      T* start = get_channel(channel);
       return { start, start + _size };
    }
 }
