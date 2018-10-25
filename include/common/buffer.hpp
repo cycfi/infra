@@ -6,50 +6,15 @@
 #if !defined(CYCFI_BUFFER_OCTOBER_15_2018)
 #define CYCFI_BUFFER_OCTOBER_15_2018
 
-#include <cstddef>
-#include <iterator>
-#include <type_traits>
-#include <common/assert.hpp>
+#include <common/iterator_range.hpp>
 
 namespace cycfi
 {
    ////////////////////////////////////////////////////////////////////////////
-   // Iterator Range holds an iterator pair
-	////////////////////////////////////////////////////////////////////////////
-   template <typename Iterator>
-   class iterator_range
-   {
-   public:
-
-      using traits = std::iterator_traits<Iterator>;
-      using difference_type = typename traits::difference_type;
-      using value_type = typename traits::value_type;
-      using pointer = typename traits::pointer;
-      using reference = typename traits::reference;
-
-      static_assert(
-         std::is_same<
-            typename traits::iterator_category
-          , std::random_access_iterator_tag
-         >::value
-       , "Random access iterator required"
-      );
-
-                           iterator_range();
-                           iterator_range(Iterator f, Iterator l);
-
-      Iterator             begin() const  { return _f; }
-      Iterator             end() const    { return _l; }
-      value_type           operator[](std::size_t i) const;
-
-   private:
-
-      Iterator             _f;
-      Iterator             _l;
-   };
-
-   ////////////////////////////////////////////////////////////////////////////
-   // audio_buffer holds a pointer to a multichannel audio buffer
+   // audio_buffer is a platform independent representation of a multi
+   // channel buffer. Hosts create audio buffers using a platform dependent
+   // subclass of audio_buffer that supplies the concrete implementation of
+   // the private get_channel_base member function.
    ////////////////////////////////////////////////////////////////////////////
    template <typename T>
    class audio_buffer
@@ -69,7 +34,7 @@ namespace cycfi
 
    private:
 
-      virtual T*           get_channel(std::size_t channel) const = 0;
+      virtual T*           get_channel_base(std::size_t channel) const = 0;
 
       std::size_t          _num_channels;
       std::size_t          _size;
@@ -78,37 +43,11 @@ namespace cycfi
    ////////////////////////////////////////////////////////////////////////////
    // Implementation
    ////////////////////////////////////////////////////////////////////////////
-   template <typename Iterator>
-   iterator_range<Iterator>::iterator_range()
-    : _f(), _l() {}
-
-   template <typename Iterator>
-   iterator_range<Iterator>::iterator_range(Iterator f, Iterator l)
-    : _f(f), _l(l)
-   {
-      CYCFI_ASSERT((_f <= _l), "Invalid range");
-   }
-
-   template <typename Iterator>
-   inline iterator_range<Iterator>
-   make_iterator_range(Iterator f, Iterator l)
-   {
-      return iterator_range<Iterator>(f, l);
-   }
-
-   template <typename Iterator>
-   inline typename iterator_range<Iterator>::value_type
-   iterator_range<Iterator>::operator[](std::size_t i) const
-   {
-      CYCFI_ASSERT(i < (_l - _f), "Index out of range");
-      return _f[i];
-   }
-
    template <typename T>
    inline iterator_range<T*>
    audio_buffer<T>::operator[](std::size_t channel) const
    {
-      T* start = get_channel(channel);
+      T* start = get_channel_base(channel);
       return { start, start + _size };
    }
 }
