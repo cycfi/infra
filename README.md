@@ -1,2 +1,2 @@
-# common
+# infra
 Common cycfi support facilities
