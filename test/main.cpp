@@ -3,8 +3,9 @@
 
    Distributed under the MIT License (https://opensource.org/licenses/MIT)
 =============================================================================*/
-#define UTEST_CPP_IMPLEMENTATION
-#include <infra/upptest.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <infra/doctest.hpp>
+
 #include <infra/json.hpp>
 #include <boost/fusion/include/equal_to.hpp>
 #include <sstream>
@@ -22,8 +23,8 @@ void test_parser(json::parser const& jp, char const* in, T n)
 
    T attr;
    bool r = x3::parse(f, l, jp, attr);
-   UASSERT_TRUE(r);
-   UASSERT_EQ(attr, n);
+   REQUIRE(r);
+   REQUIRE_EQ(attr, n);
 };
 
 void test_string1(json::parser const& jp, char const* in)
@@ -33,9 +34,9 @@ void test_string1(json::parser const& jp, char const* in)
 
    json::string<char const*> s;
    bool r = x3::parse(f, l, jp, s);
-   UASSERT_TRUE(r);
-   UASSERT_EQ(s.begin(), in);
-   UASSERT_EQ(s.end(), l);
+   REQUIRE(r);
+   REQUIRE_EQ(s.begin(), in);
+   REQUIRE_EQ(s.end(), l);
 };
 
 void test_string2(json::parser const& jp, char const* in, std::string s)
@@ -45,8 +46,8 @@ void test_string2(json::parser const& jp, char const* in, std::string s)
 
    std::string attr;
    bool r = x3::parse(f, l, jp, attr);
-   UASSERT_TRUE(r);
-   UASSERT_EQ(attr, s);
+   REQUIRE(r);
+   REQUIRE_EQ(attr, s);
 };
 
 void test_string3(json::parser const& jp, std::string in, std::string s)
@@ -56,8 +57,8 @@ void test_string3(json::parser const& jp, std::string in, std::string s)
 
    std::string attr;
    bool r = x3::parse(f, l, jp, attr);
-   UASSERT_TRUE(r);
-   UASSERT_EQ(attr, s);
+   REQUIRE(r);
+   REQUIRE_EQ(attr, s);
 };
 
 template <typename C>
@@ -79,8 +80,8 @@ void test_array(json::parser const& jp, char const* in, Container const& c)
 
    Container attr;
    bool r = x3::phrase_parse(f, l, jp, x3::space, attr);
-   UASSERT_TRUE(r);
-   UASSERT_TRUE(same(attr, c));
+   REQUIRE(r);
+   REQUIRE(same(attr, c));
 };
 
 struct foo
@@ -106,8 +107,8 @@ void test_object(json::parser const& jp, char const* in, T const& obj)
 
    T attr;
    bool r = x3::phrase_parse(f, l, jp, x3::space, attr);
-   UASSERT_TRUE(r);
-   UASSERT_TRUE(attr == obj);
+   REQUIRE(r);
+   REQUIRE(attr == obj);
 };
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -126,18 +127,11 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 using fusion::operator==;
+json::parser jp;
 
-TEST_FIXTURE(test_json)
-{
-public:
-
-	test_json() {}
-
-	json::parser jp;
-};
-
+///////////////////////////////////////////////////////////////////////////////
 // ints and bools
-TEST_F(test_json_ints_and_bools, test_json, "test_json.tests")
+TEST_CASE("test_json_ints_and_bools, test_json")
 {
    test_parser(jp, "1234", 1234);
    test_parser(jp, "1234.45", 1234.45);
@@ -145,8 +139,9 @@ TEST_F(test_json_ints_and_bools, test_json, "test_json.tests")
    test_parser(jp, "false", false);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 // strings
-TEST_F(test_json_strings, test_json, "test_json.tests")
+TEST_CASE("test_json_strings, test_json")
 {
    test_string1(jp, "\"This is my string\"");
    test_string1(jp, "\"This is \\\"my\\\" string\"");
@@ -159,8 +154,9 @@ TEST_F(test_json_strings, test_json, "test_json.tests")
    test_string3(jp, "\"This is my string\"", "This is my string");
 }
 
+///////////////////////////////////////////////////////////////////////////////
 // int vector
-TEST_F(test_json_vector, test_json, "test_json.tests")
+TEST_CASE("test_json_vector, test_json")
 {
    std::vector<int> c = {1, 2, 3, 4};
    test_array(jp, "[1, 2, 3, 4]", c);
@@ -170,8 +166,9 @@ TEST_F(test_json_vector, test_json, "test_json.tests")
    test_array(jp, "[]", c2);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 // int array
-TEST_F(test_json_array, test_json, "test_json.tests")
+TEST_CASE("test_json_array, test_json")
 {
    std::array<int, 4> c = {{1, 2, 3, 4}};
    test_array(jp, "[1, 2, 3, 4]", c);
@@ -184,22 +181,25 @@ TEST_F(test_json_array, test_json, "test_json.tests")
    test_array(jp, "[]", c3);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 // double vector
-TEST_F(test_json_double_vector, test_json, "test_json.tests")
+TEST_CASE("test_json_double_vector, test_json")
 {
    std::vector<double> c = {1.1, 2.2, 3.3, 4.4};
    test_array(jp, "[1.1, 2.2, 3.3, 4.4]", c);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 // string vector
-TEST_F(test_json_string_vector, test_json, "test_json.tests")
+TEST_CASE("test_json_string_vector, test_json")
 {
    std::vector<std::string> c = {"a", "b", "c", "d"};
    test_array(jp, "[\"a\", \"b\", \"c\", \"d\"]", c);
 }
 
+///////////////////////////////////////////////////////////////////////////////
 // struct
-TEST_F(test_json_struct, test_json, "test_json.tests")
+TEST_CASE("test_json_struct, test_json")
 {
    foo obj = {1, 2.2, "hey!"};
    bar obj2 = {8, 9.9, {1, 2, 3, 4}, obj};
@@ -246,26 +246,4 @@ TEST_F(test_json_struct, test_json, "test_json.tests")
    }
 }
 
-int main(int argc, const char* argv[])
-{
-   auto res = utest::runner::run_registered(
-      [](utest::result const& tst)
-      {
-         std::cout
-            << "'"
-            << tst.info->name
-            << "' executed in "
-            << tst.duration.count()
-            << "ms with result: "
-            ;
 
-         if (tst.status == utest::status::pass)
-            std::cout << "pass" << std::endl;
-         else
-            std::cout
-               << "failed: " << tst.err_message
-               << " line: " << tst.err_line
-               << std::endl;
-      }
-   );
-}
