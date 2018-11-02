@@ -23,8 +23,8 @@ void test_parser(json::parser const& jp, char const* in, T n)
 
    T attr;
    bool r = x3::parse(f, l, jp, attr);
-   REQUIRE(r);
-   REQUIRE_EQ(attr, n);
+   CHECK(r);
+   CHECK_EQ(attr, n);
 };
 
 void test_string1(json::parser const& jp, char const* in)
@@ -34,9 +34,9 @@ void test_string1(json::parser const& jp, char const* in)
 
    json::string<char const*> s;
    bool r = x3::parse(f, l, jp, s);
-   REQUIRE(r);
-   REQUIRE_EQ(s.begin(), in);
-   REQUIRE_EQ(s.end(), l);
+   CHECK(r);
+   CHECK_EQ(s.begin(), in);
+   CHECK_EQ(s.end(), l);
 };
 
 void test_string2(json::parser const& jp, char const* in, std::string s)
@@ -46,8 +46,8 @@ void test_string2(json::parser const& jp, char const* in, std::string s)
 
    std::string attr;
    bool r = x3::parse(f, l, jp, attr);
-   REQUIRE(r);
-   REQUIRE_EQ(attr, s);
+   CHECK(r);
+   CHECK_EQ(attr, s);
 };
 
 void test_string3(json::parser const& jp, std::string in, std::string s)
@@ -57,8 +57,8 @@ void test_string3(json::parser const& jp, std::string in, std::string s)
 
    std::string attr;
    bool r = x3::parse(f, l, jp, attr);
-   REQUIRE(r);
-   REQUIRE_EQ(attr, s);
+   CHECK(r);
+   CHECK_EQ(attr, s);
 };
 
 template <typename C>
@@ -80,8 +80,8 @@ void test_array(json::parser const& jp, char const* in, Container const& c)
 
    Container attr;
    bool r = x3::phrase_parse(f, l, jp, x3::space, attr);
-   REQUIRE(r);
-   REQUIRE(same(attr, c));
+   CHECK(r);
+   CHECK(same(attr, c));
 };
 
 struct foo
@@ -107,8 +107,8 @@ void test_object(json::parser const& jp, char const* in, T const& obj)
 
    T attr;
    bool r = x3::phrase_parse(f, l, jp, x3::space, attr);
-   REQUIRE(r);
-   REQUIRE(attr == obj);
+   CHECK(r);
+   CHECK(attr == obj);
 };
 
 BOOST_FUSION_ADAPT_STRUCT(
