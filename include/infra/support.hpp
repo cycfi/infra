@@ -42,7 +42,7 @@ namespace cycfi
 
    namespace detail
    {
-      template <uint32_t bits>
+      template <std::size_t bits>
       struct int_that_fits_impl { using type = void; };
 
       template <>
@@ -57,7 +57,7 @@ namespace cycfi
       template <>
       struct int_that_fits_impl<64> { using type = std::int64_t; };
 
-      template <uint32_t bits>
+      template <std::size_t bits>
       struct uint_that_fits_impl { using type = void; };
 
       template <>
@@ -72,7 +72,7 @@ namespace cycfi
       template <>
       struct uint_that_fits_impl<64> { using type = uint64_t; };
 
-      constexpr std::uint32_t size_that_fits_int(uint32_t bits)
+      constexpr std::uint32_t size_that_fits_int(std::size_t bits)
       {
          if (bits <= 8)
             return 8;
@@ -84,7 +84,7 @@ namespace cycfi
       }
    }
 
-   template <uint32_t bits>
+   template <std::size_t bits>
    struct int_that_fits
      : detail::int_that_fits_impl<detail::size_that_fits_int(bits)>
    {
@@ -93,7 +93,7 @@ namespace cycfi
       );
    };
 
-   template <uint32_t bits>
+   template <std::size_t bits>
    struct uint_that_fits
      : detail::uint_that_fits_impl<detail::size_that_fits_int(bits)>
    {

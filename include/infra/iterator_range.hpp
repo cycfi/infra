@@ -41,7 +41,8 @@ namespace cycfi
       std::size_t          size() const;
       Iterator             begin() const  { return _f; }
       Iterator             end() const    { return _l; }
-      value_type           operator[](std::size_t i) const;
+      value_type const&    operator[](std::size_t i) const;
+      value_type&          operator[](std::size_t i);
 
    private:
 
@@ -83,8 +84,16 @@ namespace cycfi
    }
 
    template <typename Iterator>
-   inline typename iterator_range<Iterator>::value_type
+   inline typename iterator_range<Iterator>::value_type const&
    iterator_range<Iterator>::operator[](std::size_t i) const
+   {
+      CYCFI_ASSERT(i < size(), "Index out of range");
+      return _f[i];
+   }
+
+   template <typename Iterator>
+   inline typename iterator_range<Iterator>::value_type&
+   iterator_range<Iterator>::operator[](std::size_t i)
    {
       CYCFI_ASSERT(i < size(), "Index out of range");
       return _f[i];

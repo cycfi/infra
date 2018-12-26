@@ -8,6 +8,6 @@
 
 #include <cassert>
 
-#define CYCFI_ASSERT(x, msg) assert((x && msg)); (void)x, void(msg)
+#define CYCFI_ASSERT(x, msg) assert(((x) && msg)); (void)(x), void(msg)
 
 #endif
