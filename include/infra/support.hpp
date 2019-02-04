@@ -93,9 +93,11 @@ namespace cycfi
    {
       using type = typename
          detail::int_that_fits_impl<detail::size_that_fits_int(bits)>::type;
+#if !defined(_MSC_VER)
       static_assert(!std::is_same<type, void>::value,
          "Error: No int type fits specified number of bits."
       );
+#endif
    };
 
    template <std::size_t bits>
@@ -104,9 +106,11 @@ namespace cycfi
    {
       using type = typename
          detail::uint_that_fits_impl<detail::size_that_fits_int(bits)>::type;
+#if !defined(_MSC_VER)
       static_assert(!std::is_same<type, void>::value,
          "Error: No int type fits specified number of bits."
       );
+#endif
    };
 
    using natural_int = typename int_that_fits<sizeof(void*) * CHAR_BIT>::type;
