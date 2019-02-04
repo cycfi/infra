@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <cassert>
 #include <chrono>
+#include <limits>
 
 namespace cycfi
 {
@@ -72,7 +73,7 @@ namespace cycfi
       template <>
       struct uint_that_fits_impl<64> { using type = uint64_t; };
 
-      constexpr std::uint32_t size_that_fits_int(std::size_t bits)
+      constexpr std::size_t size_that_fits_int(std::size_t bits)
       {
          if (bits <= 8)
             return 8;
@@ -80,6 +81,8 @@ namespace cycfi
             return 16;
          else if (bits <= 32)
             return 32;
+         else if (bits <= 64)
+            return 64;
          return 0;
       }
    }
@@ -88,7 +91,9 @@ namespace cycfi
    struct int_that_fits
      : detail::int_that_fits_impl<detail::size_that_fits_int(bits)>
    {
-      static_assert(std::is_same<typename int_that_fits<bits>::type, void>::value,
+      using type = typename
+         detail::int_that_fits_impl<detail::size_that_fits_int(bits)>::type;
+      static_assert(!std::is_same<type, void>::value,
          "Error: No int type fits specified number of bits."
       );
    };
@@ -97,57 +102,24 @@ namespace cycfi
    struct uint_that_fits
      : detail::uint_that_fits_impl<detail::size_that_fits_int(bits)>
    {
-      static_assert(std::is_same<typename uint_that_fits<bits>::type, void>::value,
+      using type = typename
+         detail::uint_that_fits_impl<detail::size_that_fits_int(bits)>::type;
+      static_assert(!std::is_same<type, void>::value,
          "Error: No int type fits specified number of bits."
       );
    };
+
+   using natural_int = typename int_that_fits<sizeof(void*) * CHAR_BIT>::type;
+   using natural_uint = typename uint_that_fits<sizeof(void*) * CHAR_BIT>::type;
 
    ////////////////////////////////////////////////////////////////////////////
    // Constants
 	////////////////////////////////////////////////////////////////////////////
    template <typename T>
-   struct int_traits;
-
-   template <>
-   struct int_traits<uint32_t>
+   struct int_traits
    {
-      static constexpr std::uint32_t max = 4294967295;
-      static constexpr std::uint32_t min = 0;
-   };
-
-   template <>
-   struct int_traits<int32_t>
-   {
-      static constexpr int32_t max = 2147483647;
-      static constexpr int32_t min = -2147483648;
-   };
-
-   template <>
-   struct int_traits<uint16_t>
-   {
-      static constexpr uint16_t max = 65535;
-      static constexpr uint16_t min = 0;
-   };
-
-   template <>
-   struct int_traits<int16_t>
-   {
-      static constexpr int16_t max = 32767;
-      static constexpr int16_t min = -32768;
-   };
-
-   template <>
-   struct int_traits<uint8_t>
-   {
-      static constexpr uint8_t max = 255;
-      static constexpr uint8_t min = 0;
-   };
-
-   template <>
-   struct int_traits<int8_t>
-   {
-      static constexpr uint8_t max = 127;
-      static constexpr uint8_t min = -128;
+      static constexpr T max = std::numeric_limits<T>::max();
+      static constexpr T min = std::numeric_limits<T>::min();
    };
 
    template <typename T>
