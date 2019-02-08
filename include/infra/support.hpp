@@ -11,6 +11,7 @@
 #include <cassert>
 #include <chrono>
 #include <limits>
+#include <climits>
 
 namespace cycfi
 {
