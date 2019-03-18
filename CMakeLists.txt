@@ -8,6 +8,8 @@ cmake_minimum_required(VERSION 3.5.1)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(INFRA_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 add_library(infra INTERFACE)
-target_include_directories(infra INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(infra INTERFACE ${INFRA_HEADER})
 
