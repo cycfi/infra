@@ -38,6 +38,9 @@ namespace cycfi
                            iterator_range();
                            iterator_range(Iterator f, Iterator l);
 
+                           template <std::size_t N>
+                           iterator_range(value_type(&arr)[N]);
+
       std::size_t          size() const;
       Iterator             begin() const  { return _f; }
       Iterator             end() const    { return _l; }
@@ -74,6 +77,13 @@ namespace cycfi
     : _f(f), _l(l)
    {
       CYCFI_ASSERT((_f <= _l), "Invalid range");
+   }
+
+   template <typename Iterator>
+   template <std::size_t N>
+   iterator_range<Iterator>::iterator_range(value_type(&arr)[N])
+    : _f(arr), _l(arr + N)
+   {
    }
 
    template <typename Iterator>
