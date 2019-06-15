@@ -35,7 +35,7 @@ namespace cycfi
       template <typename T>
       Derived& operator>>(T& val)
       {
-         auto oh = msgpack::unpack(derived().begin(), derived().size(), _offset);
+         auto oh = msgpack::unpack(derived().data(), derived().size(), _offset);
          auto obj = oh.get();
          val = obj.template as<T>();
          return derived();
