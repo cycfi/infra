@@ -41,6 +41,8 @@ namespace cycfi
          return derived();
       }
 
+      std::size_t offset() const { return _offset; }
+
    private:
 
       std::size_t _offset = 0;
