@@ -38,6 +38,21 @@ namespace cycfi
    using time_point     = std::chrono::time_point<std::chrono::steady_clock, duration>;
 
    ////////////////////////////////////////////////////////////////////////////
+   // constexpr utilities
+   ////////////////////////////////////////////////////////////////////////////
+   constexpr bool equal(char const* lhs, char const* rhs)
+   {
+      if (lhs == rhs)
+         return true;
+      if (!lhs || !rhs)
+         return false;
+      while (*lhs || *rhs)
+         if (*lhs++ != *rhs++)
+            return false;
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    // Metaprogramming utilities
    ////////////////////////////////////////////////////////////////////////////
    template <typename T, typename... Rest>
