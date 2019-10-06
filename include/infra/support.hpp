@@ -272,5 +272,42 @@ namespace cycfi
 
    template <uint64_t i>
    using uint64_ = static_int<uint64_t, i>;
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Utilities
+   ////////////////////////////////////////////////////////////////////////////
+   template <typename T, typename U>
+   inline void clamp_max(T& val, U const& max)
+   {
+      if (val > max)
+         val = max;
+   }
+
+   template <typename T, typename U>
+   inline void clamp_min(T& val, U const& min)
+   {
+      if (val < min)
+         val = min;
+   }
+
+   template <typename T, typename U, typename V>
+   inline void clamp(T& val, U const& min, V const& max)
+   {
+      assert(min <= max);
+      clamp_min(val, min);
+      clamp_max(val, max);
+   }
+
+   template <typename T, typename U, typename V>
+   inline bool within(T const& val, U const& min, V const& max)
+   {
+      return (val >= min) && (val <= max);
+   }
+
+   template <typename T>
+   constexpr T abs(T i)
+   {
+      return (i >= 0)? i : -i;
+   }
 }
 #endif
