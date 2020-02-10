@@ -277,25 +277,28 @@ namespace cycfi
    // Utilities
    ////////////////////////////////////////////////////////////////////////////
    template <typename T, typename U>
-   inline void clamp_max(T& val, U const& max)
+   inline T& clamp_max(T& val, U const& max)
    {
       if (val > max)
          val = max;
+      return val;
    }
 
    template <typename T, typename U>
-   inline void clamp_min(T& val, U const& min)
+   inline T& clamp_min(T& val, U const& min)
    {
       if (val < min)
          val = min;
+      return val;
    }
 
    template <typename T, typename U, typename V>
-   inline void clamp(T& val, U const& min, V const& max)
+   inline T& clamp(T& val, U const& min, V const& max)
    {
       assert(min <= max);
       clamp_min(val, min);
       clamp_max(val, max);
+      return val;
    }
 
    template <typename T, typename U, typename V>
