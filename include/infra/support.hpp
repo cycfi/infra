@@ -12,6 +12,7 @@
 #include <chrono>
 #include <limits>
 #include <climits>
+#include <string>
 
 namespace cycfi
 {
@@ -312,5 +313,13 @@ namespace cycfi
    {
       return (i >= 0)? i : -i;
    }
+
+#if (__cplusplus > 201703L)
+   template <std::size_t N>
+   std::string to_string(char8_t const (&u8_str)[N])
+   {
+      return { u8_str, u8_str+N };
+   }
+#endif
 }
 #endif
