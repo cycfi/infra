@@ -321,5 +321,14 @@ namespace cycfi
       return { u8_str, u8_str+N };
    }
 #endif
+
+   ////////////////////////////////////////////////////////////////////////////
+   // deleter: generic custom deleter for, e.g. unique_ptr.
+   ////////////////////////////////////////////////////////////////////////////
+   template <typename T, void(&delete_)(T*)>
+   struct deleter
+   {
+      void operator()(T* p) { delete_(p); }
+   };
 }
 #endif
