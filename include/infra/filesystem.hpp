@@ -20,6 +20,7 @@
 # endif
 #endif
 
+namespace cycfi {
 #if defined(INFRA_USE_STD_FS)
 # include <filesystem>
   namespace fs = std::filesystem;
@@ -27,5 +28,6 @@
 # include <ghc/filesystem.hpp>
   namespace fs = ghc::filesystem;
 #endif
+}
 
 #endif
