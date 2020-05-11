@@ -20,6 +20,20 @@
 # endif
 #endif
 
+#if defined(INFRA_FORCE_STD_FS) && defined(INFRA_FORCE_GHC_FS)
+# error two filesystem implementations should not be forced at the same time
+#endif
+
+#if defined(INFRA_FORCE_STD_FS)
+# if !defined(INFRA_USE_STD_FS)
+#  define INFRA_USE_STD_FS
+# endif
+#elif defined(INFRA_FORCE_GHC_FS)
+# if defined(INFRA_USE_STD_FS)
+#  undef INFRA_USE_STD_FS
+# endif
+#endif
+
 #if defined(INFRA_USE_STD_FS)
 # include <filesystem>
 namespace cycfi {
