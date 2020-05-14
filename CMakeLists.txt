@@ -38,3 +38,5 @@ if(INFRA_ADD_FS_LINK)
         $<$<CXX_COMPILER_ID:Clang>:c++fs>
     )
 endif()
+
+add_library(cycfi::infra ALIAS infra)
