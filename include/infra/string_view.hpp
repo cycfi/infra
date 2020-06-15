@@ -26,7 +26,7 @@
 # endif
 #endif
 
-#ifdef INFRA_USE_STD_STRING_VIEW
+#if defined(INFRA_USE_STD_STRING_VIEW)
 
 #include <string_view>
 

@@ -26,7 +26,7 @@
 # endif
 #endif
 
-#ifdef INFRA_USE_STD_OPTIONAL
+#if defined(INFRA_USE_STD_OPTIONAL)
 
 #include <optional>
 
