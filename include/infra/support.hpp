@@ -349,5 +349,16 @@ namespace cycfi
    {
       void operator()(T* p) { delete_(p); }
    };
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Return true if little endian
+   ////////////////////////////////////////////////////////////////////////////
+   inline bool is_little_endian()
+   {
+      static_assert(sizeof(char)!=sizeof(short), "Error: not usable on this machine");
+      short number = 0x1;
+      char *p = reinterpret_cast<char*>(&number);
+      return (p[0] == 1);
+   }
 }
 #endif
