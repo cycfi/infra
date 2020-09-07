@@ -13,16 +13,18 @@
 namespace cycfi
 {
    ////////////////////////////////////////////////////////////////////////////
-   std::string    codepoint_to_utf8(char32_t codepoint);
-   bool           is_space(char32_t codepoint);
-   bool           is_newline(char32_t codepoint);
-   bool           is_punctuation(char32_t codepoint);
-   char32_t       decode_utf8(char32_t& state, char32_t& codepoint, char32_t byte);
-   char const*    next_utf8(char const* utf8, char const* last);
-   char const*    prev_utf8(char const* utf8, char const* first);
-   char32_t       codepoint(char const*& utf8);
-   std::string    codepoint_to_utf8(char32_t codepoint);
-   std::string    to_utf8(std::u32string_view utf32);
+   std::string       codepoint_to_utf8(char32_t codepoint);
+   bool              is_space(char32_t codepoint);
+   bool              is_newline(char32_t codepoint);
+   bool              is_punctuation(char32_t codepoint);
+   char32_t          decode_utf8(char32_t& state, char32_t& codepoint, char32_t byte);
+   char const*       next_utf8(char const* utf8, char const* last);
+   char const*       prev_utf8(char const* utf8, char const* first);
+   char32_t          codepoint(char const*& utf8);
+   std::string       codepoint_to_utf8(char32_t codepoint);
+   std::string       to_utf8(std::u32string_view utf32);
+   std::u32string    to_utf32(std::string_view s);
+   bool              is_valid_utf8(std::string_view s);
 
    ////////////////////////////////////////////////////////////////////////////
    // Inlines
@@ -113,7 +115,7 @@ namespace cycfi
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   // Decoding UTF8
+   // Decoding utf8
    //
    // Copyright (c) 2008-2010 Bjoern Hoehrmann <bjoern@hoehrmann.de>
    // See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
@@ -161,7 +163,7 @@ namespace cycfi
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   // UTF8 Iteration. See A code point iterator adapter for C++ strings in
+   // utf8 Iteration. See A code point iterator adapter for C++ strings in
    // UTF-8 by Ángel José Riesgo: http://www.nubaria.com/en/blog/?p=371
    ////////////////////////////////////////////////////////////////////////////
    struct utf8_mask
@@ -205,7 +207,7 @@ namespace cycfi
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   // Extracting codepoints from UTF8
+   // Extracting codepoints from utf8
    ////////////////////////////////////////////////////////////////////////////
    inline char32_t codepoint(char const*& utf8)
    {
@@ -215,6 +217,42 @@ namespace cycfi
          utf8++;
       ++utf8; // one past the last byte
       return cp;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Converting utf8 to u32string
+   ////////////////////////////////////////////////////////////////////////////
+   inline std::u32string to_utf32(std::string_view s)
+   {
+      std::u32string s32;
+      char const* last = s.data() + s.size();
+      char32_t state = 0;
+      char32_t cp;
+      for (char const* i = s.data(); i != last; ++i)
+      {
+         while (decode_utf8(state, cp, uint8_t(*i)))
+            i++;
+         s32.push_back(cp);
+      }
+      if (state == utf8_reject)
+         throw std::runtime_error{ "Error: Invalid utf8." };
+      return s32;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Check for valid utf8
+   ////////////////////////////////////////////////////////////////////////////
+   inline bool is_valid_utf8(std::string_view s)
+   {
+      char const* last = s.data() + s.size();
+      char32_t state = 0;
+      char32_t cp;
+      for (char const* i = s.data(); i != last; ++i)
+      {
+         while (decode_utf8(state, cp, uint8_t(*i)))
+            i++;
+      }
+      return state != utf8_reject;
    }
 }
 
