@@ -7,26 +7,29 @@
 #define INFRA_UTF8_UTILS_MAY_22_2016
 
 #include <string>
+#include <string_view>
 #include <cctype>
 
 namespace cycfi
 {
    ////////////////////////////////////////////////////////////////////////////
-   std::string    codepoint_to_utf8(unsigned codepoint);
-   bool           is_space(unsigned codepoint);
-   bool           is_newline(unsigned codepoint);
-   bool           is_punctuation(unsigned codepoint);
-   unsigned       decode_utf8(unsigned& state, unsigned& codepoint, unsigned byte);
+   std::string    codepoint_to_utf8(char32_t codepoint);
+   bool           is_space(char32_t codepoint);
+   bool           is_newline(char32_t codepoint);
+   bool           is_punctuation(char32_t codepoint);
+   char32_t       decode_utf8(char32_t& state, char32_t& codepoint, char32_t byte);
    char const*    next_utf8(char const* utf8, char const* last);
    char const*    prev_utf8(char const* utf8, char const* first);
-   unsigned       codepoint(char const*& utf8);
+   char32_t       codepoint(char const*& utf8);
+   std::string    codepoint_to_utf8(char32_t codepoint);
+   std::string    to_utf8(std::u32string_view utf32);
 
    ////////////////////////////////////////////////////////////////////////////
    // Inlines
    ////////////////////////////////////////////////////////////////////////////
    namespace detail
    {
-      inline char const* codepoint_to_utf8(unsigned cp, char str[8])
+      inline char const* codepoint_to_utf8(char32_t cp, char str[8])
       {
          int n = 0;
          if (cp < 0x80) n = 1;
@@ -50,14 +53,26 @@ namespace cycfi
       }
    }
 
-   inline std::string codepoint_to_utf8(unsigned codepoint)
+   inline std::string codepoint_to_utf8(char32_t codepoint)
    {
       std::string result{ 8 };
       detail::codepoint_to_utf8(codepoint, &result[0]);
       return result;
    }
 
-   inline bool is_space(unsigned codepoint)
+   inline std::string to_utf8(std::u32string_view utf32)
+   {
+      std::string utf8;
+      for (auto cp : utf32)
+      {
+         char str[8];
+         detail::codepoint_to_utf8(cp, str);
+         utf8 += str;
+      }
+      return utf8;
+   }
+
+   inline bool is_space(char32_t codepoint)
    {
       switch (codepoint)
       {
@@ -75,7 +90,7 @@ namespace cycfi
    }
 
    // Check if codepoint is a new line
-   inline bool is_newline(unsigned codepoint)
+   inline bool is_newline(char32_t codepoint)
    {
       switch (codepoint)
       {
@@ -89,7 +104,7 @@ namespace cycfi
    }
 
    // Check if codepoint is a punctuation
-   inline bool is_punctuation(unsigned codepoint)
+   inline bool is_punctuation(char32_t codepoint)
    {
       return (codepoint < 0x80 && std::ispunct(codepoint))
          || (codepoint >= 0xA0 && codepoint <= 0xBF)
@@ -110,7 +125,7 @@ namespace cycfi
       utf8_reject = 12
    };
 
-   inline unsigned decode_utf8(unsigned& state, unsigned& codepoint, uint8_t byte)
+   inline char32_t decode_utf8(char32_t& state, char32_t& codepoint, uint8_t byte)
    {
       static constexpr uint8_t utf8d[] =
       {
@@ -134,7 +149,7 @@ namespace cycfi
          12,36,12,12,12,12,12,12,12,12,12,12,
       };
 
-      unsigned type = utf8d[byte];
+      char32_t type = utf8d[byte];
 
       codepoint = (state != utf8_accept) ?
          (byte & 0x3fu) | (codepoint << 6) :
@@ -192,10 +207,10 @@ namespace cycfi
    ////////////////////////////////////////////////////////////////////////////
    // Extracting codepoints from UTF8
    ////////////////////////////////////////////////////////////////////////////
-   inline unsigned codepoint(char const*& utf8)
+   inline char32_t codepoint(char const*& utf8)
    {
-      unsigned state = 0;
-      unsigned cp;
+      char32_t state = 0;
+      char32_t cp;
       while (decode_utf8(state, cp, uint8_t(*utf8)))
          utf8++;
       ++utf8; // one past the last byte
