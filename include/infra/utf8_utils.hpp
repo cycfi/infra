@@ -13,10 +13,15 @@
 namespace cycfi
 {
    ////////////////////////////////////////////////////////////////////////////
+   bool              is_space(char32_t cp);
+   bool              is_newline(char32_t cp);
+   bool              is_punctuation(char32_t cp);
+
+   bool              is_space(char const* utf8);
+   bool              is_newline(char const* utf8);
+   bool              is_punctuation(char const* utf8);
+
    std::string       codepoint_to_utf8(char32_t codepoint);
-   bool              is_space(char32_t codepoint);
-   bool              is_newline(char32_t codepoint);
-   bool              is_punctuation(char32_t codepoint);
    char32_t          decode_utf8(char32_t& state, char32_t& codepoint, char32_t byte);
    char const*       next_utf8(char const* utf8, char const* last);
    char const*       prev_utf8(char const* utf8, char const* first);
@@ -112,6 +117,21 @@ namespace cycfi
          || (codepoint >= 0xA0 && codepoint <= 0xBF)
          || (codepoint >= 0x2000 && codepoint <= 0x206F)
          ;
+   }
+
+   inline bool is_space(char const* utf8)
+   {
+      return is_space(codepoint(utf8));
+   }
+
+   inline bool is_newline(char const* utf8)
+   {
+      return is_newline(codepoint(utf8));
+   }
+
+   inline bool is_punctuation(char const* utf8)
+   {
+      return is_newline(codepoint(utf8));
    }
 
    ////////////////////////////////////////////////////////////////////////////
