@@ -6,6 +6,11 @@
 #if !defined(INFRA_SUPPORT_APRIL_10_2016)
 #define INFRA_SUPPORT_APRIL_10_2016
 
+#if defined(_WIN32)
+# define _USE_MATH_DEFINES // for M_PI
+# include <cmath>
+#endif
+
 #include <cfloat>
 #include <cstdint>
 #include <cassert>
