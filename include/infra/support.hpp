@@ -231,12 +231,12 @@ namespace cycfi
       return i;
    }
 
-   constexpr float promote(float i)
+   constexpr double promote(float i)
    {
       return i;
    }
 
-   constexpr double promote(double i)
+   constexpr long double promote(double i)
    {
       return i;
    }
