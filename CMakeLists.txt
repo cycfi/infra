@@ -55,10 +55,17 @@ if(INFRA_FORCE_NONSTD_OPTIONAL)
 endif()
 
 if(INFRA_ADD_FS_LINK)
-    target_link_libraries(infra INTERFACE
-        $<$<CXX_COMPILER_ID:GNU>:stdc++fs>
-        $<$<CXX_COMPILER_ID:Clang>:c++fs>
-    )
+    include(CheckCXXSymbolExists)
+    # ciso646 is empty on C++, which makes it a convenient header for checking
+    # the currently used libc++.
+    # Note that it has been removed in C++20, however:
+    # https://en.cppreference.com/w/cpp/header/ciso646
+    check_cxx_symbol_exists(_LIBCPP_VERSION "ciso646" HAVE_LIBCPP)
+    if(HAVE_LIBCPP)
+        target_link_libraries(infra INTERFACE c++fs)
+    else()
+        target_link_libraries(infra INTERFACE stdc++fs)
+    endif()
 endif()
 
 add_library(cycfi::infra ALIAS infra)
