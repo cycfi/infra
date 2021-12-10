@@ -54,6 +54,12 @@ if(INFRA_FORCE_NONSTD_OPTIONAL)
     target_compile_definitions(infra INTERFACE INFRA_FORCE_NONSTD_OPTIONAL)
 endif()
 
+if(MSVC)
+    # MSVC does not correctly report __cplusplus by default, so we need to enable it
+    # see https://docs.microsoft.com/bs-cyrl-ba/cpp/build/reference/zc-cplusplus?view=msvc-160 for details
+   target_compile_options(infra INTERFACE /Zc:__cplusplus)
+endif()
+
 if(INFRA_ADD_FS_LINK)
     include(CheckCXXSymbolExists)
     # ciso646 is empty on C++, which makes it a convenient header for checking
