@@ -62,8 +62,8 @@ namespace cycfi
 
    inline std::string codepoint_to_utf8(char32_t codepoint)
    {
-      std::string result{ 8 };
-      detail::codepoint_to_utf8(codepoint, &result[0]);
+      char cache[8];
+      auto result = detail::codepoint_to_utf8(codepoint, cache);
       return result;
    }
 
