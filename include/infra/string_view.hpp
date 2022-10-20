@@ -1,6 +1,6 @@
 /*=============================================================================
-   Copyright (c) 2016-2020 Joel de Guzman
-   Copyright (c) 2020      Jean Pierre Cimalando
+   Copyright (c) 2016-2022 Joel de Guzman
+   Copyright (c) 2022      Jean Pierre Cimalando
 
    Distributed under the MIT License [ https://opensource.org/licenses/MIT ]
 =============================================================================*/
