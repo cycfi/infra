@@ -26,6 +26,7 @@ namespace cycfi
       using value_type = typename traits::value_type;
       using pointer = typename traits::pointer;
       using reference = typename traits::reference;
+      using iterator = Iterator;
 
       static_assert(
          std::is_same<
@@ -45,7 +46,6 @@ namespace cycfi
       Iterator             begin() const  { return _f; }
       Iterator             end() const    { return _l; }
       auto&                operator[](std::size_t i) const;
-      auto&                operator[](std::size_t i);
 
    private:
 
@@ -96,14 +96,6 @@ namespace cycfi
    template <typename Iterator>
    inline auto&
    iterator_range<Iterator>::operator[](std::size_t i) const
-   {
-      CYCFI_ASSERT(i < size(), "Index out of range");
-      return _f[i];
-   }
-
-   template <typename Iterator>
-   inline auto&
-   iterator_range<Iterator>::operator[](std::size_t i)
    {
       CYCFI_ASSERT(i < size(), "Index out of range");
       return _f[i];
