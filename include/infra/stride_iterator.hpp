@@ -24,10 +24,6 @@ namespace cycfi
       using pointer = T*;
       using reference = T&;
 
-      using difference_type =
-         typename std::iterator<std::random_access_iterator_tag, T>
-      ::difference_type;
-
       constexpr explicit            stride_iterator(
                                        T* rhs = nullptr
                                      , difference_type stride = difference_type{1}
