@@ -7,28 +7,26 @@
 #define INFRA_STRIDE_ITERATOR_SEPTEMBER_14_2022
 
 #include <cstddef>
-#include <iterator>
 
 namespace cycfi
 {
    ////////////////////////////////////////////////////////////////////////////
-   // stride_iterator: An iterator that iterates in strides (multiple
-   // elements per step)
+   // stride_iterator: An iterator that iterates in strides
+   // (multiple elements per step)
    ////////////////////////////////////////////////////////////////////////////
    template <typename T>
    struct stride_iterator
    {
       using iterator_category = std::random_access_iterator_tag;
-      using difference_type = std::ptrdiff_t;
       using value_type = T;
+      using difference_type = ptrdiff_t;
       using pointer = T*;
       using reference = T&;
 
       constexpr explicit            stride_iterator(
-                                       T* rhs = nullptr
-                                     , difference_type stride = difference_type{1}
+                                       T* rhs = nullptr,
+                                       difference_type stride = difference_type{1}
                                     );
-
       constexpr                     stride_iterator(stride_iterator const&) = default;
       constexpr                     stride_iterator(stride_iterator&&) = default;
 
