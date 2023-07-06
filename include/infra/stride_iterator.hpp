@@ -7,6 +7,7 @@
 #define INFRA_STRIDE_ITERATOR_SEPTEMBER_14_2022
 
 #include <cstddef>
+#include <iterator>
 
 namespace cycfi
 {
