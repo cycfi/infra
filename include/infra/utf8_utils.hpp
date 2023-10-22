@@ -254,7 +254,7 @@ namespace cycfi
          s32.push_back(cp);
       }
       if (state == utf8_reject)
-         throw std::runtime_error{ "Error: Invalid utf8." };
+         throw std::runtime_error{"Error: Invalid utf8."};
       return s32;
    }
 

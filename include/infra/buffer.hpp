@@ -48,7 +48,7 @@ namespace cycfi
    audio_buffer<T>::operator[](std::size_t channel) const
    {
       T* start = get_channel_base(channel);
-      return { start, start + _size };
+      return {start, start + _size};
    }
 }
 
