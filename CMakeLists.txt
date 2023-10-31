@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 if (TARGET infra)
-    return()
+   return()
 endif()
 
 project(infra)
@@ -27,51 +27,55 @@ set(INFRA_OPTIONAL_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/external/optional-lite/inc
 set(INFRA_STRING_VIEW_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/external/string-view-lite/include)
 
 add_library(infra INTERFACE)
-target_include_directories(infra INTERFACE ${INFRA_HEADER} ${INFRA_FILESYSTEM_HEADER} ${INFRA_OPTIONAL_HEADER} ${INFRA_STRING_VIEW_HEADER})
+target_include_directories(infra INTERFACE
+   ${INFRA_HEADER}
+   ${INFRA_FILESYSTEM_HEADER}
+   ${INFRA_OPTIONAL_HEADER}
+   ${INFRA_STRING_VIEW_HEADER})
 target_compile_features(infra INTERFACE cxx_std_14)
 
 if(INFRA_FORCE_STD_FS)
-    target_compile_definitions(infra INTERFACE INFRA_FORCE_STD_FS)
+   target_compile_definitions(infra INTERFACE INFRA_FORCE_STD_FS)
 endif()
 
 if(INFRA_FORCE_GHC_FS)
-    target_compile_definitions(infra INTERFACE INFRA_FORCE_GHC_FS)
+   target_compile_definitions(infra INTERFACE INFRA_FORCE_GHC_FS)
 endif()
 
 if(INFRA_FORCE_STD_STRING_VIEW)
-    target_compile_definitions(infra INTERFACE INFRA_FORCE_STD_STRING_VIEW)
+   target_compile_definitions(infra INTERFACE INFRA_FORCE_STD_STRING_VIEW)
 endif()
 
 if(INFRA_FORCE_NONSTD_STRING_VIEW)
-    target_compile_definitions(infra INTERFACE INFRA_FORCE_NONSTD_STRING_VIEW)
+   target_compile_definitions(infra INTERFACE INFRA_FORCE_NONSTD_STRING_VIEW)
 endif()
 
 if(INFRA_FORCE_STD_OPTIONAL)
-    target_compile_definitions(infra INTERFACE INFRA_FORCE_STD_OPTIONAL)
+   target_compile_definitions(infra INTERFACE INFRA_FORCE_STD_OPTIONAL)
 endif()
 
 if(INFRA_FORCE_NONSTD_OPTIONAL)
-    target_compile_definitions(infra INTERFACE INFRA_FORCE_NONSTD_OPTIONAL)
+   target_compile_definitions(infra INTERFACE INFRA_FORCE_NONSTD_OPTIONAL)
 endif()
 
 if(MSVC)
-    # MSVC does not correctly report __cplusplus by default, so we need to enable it
-    # see https://docs.microsoft.com/bs-cyrl-ba/cpp/build/reference/zc-cplusplus?view=msvc-160 for details
+   # MSVC does not correctly report __cplusplus by default, so we need to enable it
+   # see https://docs.microsoft.com/bs-cyrl-ba/cpp/build/reference/zc-cplusplus?view=msvc-160 for details
    target_compile_options(infra INTERFACE /Zc:__cplusplus)
 endif()
 
 if(INFRA_ADD_FS_LINK)
-    include(CheckCXXSymbolExists)
-    # ciso646 is empty on C++, which makes it a convenient header for checking
-    # the currently used libc++.
-    # Note that it has been removed in C++20, however:
-    # https://en.cppreference.com/w/cpp/header/ciso646
-    check_cxx_symbol_exists(_LIBCPP_VERSION "ciso646" HAVE_LIBCPP)
-    if(HAVE_LIBCPP)
-        target_link_libraries(infra INTERFACE c++fs)
-    else()
-        target_link_libraries(infra INTERFACE stdc++fs)
-    endif()
+   include(CheckCXXSymbolExists)
+   # ciso646 is empty on C++, which makes it a convenient header for checking
+   # the currently used libc++.
+   # Note that it has been removed in C++20, however:
+   # https://en.cppreference.com/w/cpp/header/ciso646
+   check_cxx_symbol_exists(_LIBCPP_VERSION "ciso646" HAVE_LIBCPP)
+   if(HAVE_LIBCPP)
+      target_link_libraries(infra INTERFACE c++fs)
+   else()
+      target_link_libraries(infra INTERFACE stdc++fs)
+   endif()
 endif()
 
 add_library(cycfi::infra ALIAS infra)
