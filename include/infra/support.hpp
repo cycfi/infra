@@ -366,4 +366,16 @@ namespace cycfi
       return (p[0] == 1);
    }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// CYCFI_FORCE_INLINE utility
+///////////////////////////////////////////////////////////////////////////////
+#ifdef _MSC_VER
+   #define CYCFI_FORCE_INLINE __forceinline
+#elif defined(__GNUC__) || defined(__clang__)
+   #define CYCFI_FORCE_INLINE inline __attribute__((always_inline))
+#else
+   #define CYCFI_FORCE_INLINE inline
+#endif
+
 #endif
