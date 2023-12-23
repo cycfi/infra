@@ -365,6 +365,13 @@ namespace cycfi
       char *p = reinterpret_cast<char*>(&number);
       return (p[0] == 1);
    }
+
+   //==============================================================================================
+   /// @brief Evaluates to `T` if `T` is a fundamental type or to `T const&` if not.
+   /// @tparam T The original type parameter.
+   //==============================================================================================
+   template <typename T>
+   using param_type = std::conditional_t<std::is_fundamental_v<T>, T, T const&>;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
