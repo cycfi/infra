@@ -367,11 +367,12 @@ namespace cycfi
    }
 
    //==============================================================================================
-   /// @brief Evaluates to `T` if `T` is a fundamental type or to `T const&` if not.
+   /// @brief Evaluates to `T` if `T` is a scalar type or to `T const&` if not.
    /// @tparam T The original type parameter.
    //==============================================================================================
    template <typename T>
-   using param_type = std::conditional_t<std::is_fundamental_v<T>, T, T const&>;
+   using param_type =
+      std::conditional_t<std::is_scalar_v<T>, T, std::remove_reference_t<T> const&>;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
