@@ -30,11 +30,7 @@ set(INFRA_STRING_VIEW_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/external/string-view-li
 include(Config.cmake)
 
 # Add our CMake modules to path
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-option(${GLOBAL_NS}_ENABLE_GIT_SUBMODULE_CHECK             "check and clone submodules when not available." ON)
-option(${GLOBAL_NS}_ENABLE_LTO                             "enable link time optimization for Elements targets" OFF)
-set   (${GLOBAL_NS}_USE_EMPTY_SOURCE_GROUPS OFF CACHE BOOL "if to use virtual directories")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_library(infra INTERFACE)
 target_include_directories(infra INTERFACE
