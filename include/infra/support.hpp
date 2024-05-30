@@ -19,6 +19,7 @@
 #include <climits>
 #include <string>
 #include <type_traits>
+#include <memory>
 
 namespace cycfi
 {
