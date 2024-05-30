@@ -51,6 +51,22 @@ namespace cycfi
    void unused(T&&...) {}
 
    ////////////////////////////////////////////////////////////////////////////
+   // Shared pointer utilities
+   ////////////////////////////////////////////////////////////////////////////
+   template <typename T>
+   inline auto share(T&& obj)
+   {
+      using type = typename std::decay<T>::type;
+      return std::make_shared<type>(std::forward<T>(obj));
+   }
+
+   template <typename T>
+   inline auto get(std::shared_ptr<T> const& ptr)
+   {
+      return std::weak_ptr<T>(ptr);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    // Time
    ////////////////////////////////////////////////////////////////////////////
    using duration       = std::chrono::duration<double>;
