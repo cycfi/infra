@@ -9,7 +9,14 @@ if (TARGET infra)
    return()
 endif()
 
-project(infra)
+# Do not include a project name if building for ESP-IDF
+if(DEFINED ENV{IDF_PATH})
+   idf_component_register(
+      INCLUDE_DIRS ./include
+   )
+else()
+   project(infra)
+endif()
 
 option(INFRA_FORCE_STD_FS             "force use of std::filesystem in infra"     OFF)
 option(INFRA_FORCE_GHC_FS             "force use of ghc::filesystem in infra"     OFF)
