@@ -1500,7 +1500,9 @@ namespace Catch {
 #ifdef __OBJC__
 // start catch_objc_arc.hpp
 
-#import <Foundation/Foundation.h>
+#if defined(__APPLE__) && defined(__OBJC__)
+  #import <Foundation/Foundation.h>
+#endif
 
 #ifdef __has_feature
 #define CATCH_ARC_ENABLED __has_feature(objc_arc)
