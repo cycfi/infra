@@ -22,9 +22,6 @@ option(INFRA_FORCE_NONSTD_OPTIONAL    "force use of nonstd::optional in infra"  
 option(INFRA_ADD_FS_LINK "add linker command for standard filesystem library" OFF)
 
 set(INFRA_HEADER             ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(INFRA_FILESYSTEM_HEADER  ${CMAKE_CURRENT_SOURCE_DIR}/external/filesystem/include)
-set(INFRA_OPTIONAL_HEADER    ${CMAKE_CURRENT_SOURCE_DIR}/external/optional-lite/include)
-set(INFRA_STRING_VIEW_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/external/string-view-lite/include)
 
 # projects common options
 
@@ -36,13 +33,39 @@ option(CYCFI_ENABLE_LTO                             "enable link time optimizati
 set   (CYCFI_USE_EMPTY_SOURCE_GROUPS OFF CACHE BOOL "if to use virtual directories")
 
 add_library(infra INTERFACE)
-target_include_directories(infra INTERFACE
-   ${INFRA_HEADER}
-   ${INFRA_FILESYSTEM_HEADER}
-   ${INFRA_OPTIONAL_HEADER}
-   ${INFRA_STRING_VIEW_HEADER}
-)
+target_include_directories(infra INTERFACE ${INFRA_HEADER})
 target_compile_features(infra INTERFACE cxx_std_14)
+
+# ghc::filesystem, optional-lite and string-view-lite stand in for
+# std::filesystem, std::optional and std::string_view before C++20. Fetch
+# them only for such builds (or when forced); C++20 and later need none.
+if (NOT CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 20
+      OR INFRA_FORCE_GHC_FS OR INFRA_FORCE_NONSTD_OPTIONAL
+      OR INFRA_FORCE_NONSTD_STRING_VIEW)
+   include(FetchContent)
+   # SOURCE_SUBDIR names no CMake project: fetch the headers, build nothing.
+   FetchContent_Declare(infra_ghc_filesystem
+      GIT_REPOSITORY https://github.com/gulrak/filesystem.git
+      GIT_TAG 3605e869150032ffdd9eae3db93e12f8711a0c82
+      SOURCE_SUBDIR include
+   )
+   FetchContent_Declare(infra_optional_lite
+      GIT_REPOSITORY https://github.com/martinmoene/optional-lite.git
+      GIT_TAG 5e8a82ac029aebfd2f5708f183a00eda2be132cc
+      SOURCE_SUBDIR include
+   )
+   FetchContent_Declare(infra_string_view_lite
+      GIT_REPOSITORY https://github.com/martinmoene/string-view-lite.git
+      GIT_TAG 50561d345dafd6577654b0aa7c88983c745e83d8
+      SOURCE_SUBDIR include
+   )
+   FetchContent_MakeAvailable(infra_ghc_filesystem infra_optional_lite infra_string_view_lite)
+   target_include_directories(infra INTERFACE
+      ${infra_ghc_filesystem_SOURCE_DIR}/include
+      ${infra_optional_lite_SOURCE_DIR}/include
+      ${infra_string_view_lite_SOURCE_DIR}/include
+   )
+endif()
 
 if(INFRA_FORCE_STD_FS)
    target_compile_definitions(infra INTERFACE INFRA_FORCE_STD_FS)
