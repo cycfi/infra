@@ -38,6 +38,10 @@ namespace cycfi
    {
       inline char const* codepoint_to_utf8(char32_t cp, char str[8])
       {
+         // A surrogate or a value past U+10FFFF is not a character.
+         if (cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF))
+            cp = 0xFFFD;
+
          int n = 0;
          if (cp < 0x80) n = 1;
          else if (cp < 0x800) n = 2;
@@ -239,22 +243,56 @@ namespace cycfi
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   // Converting utf8 to u32string
+   // Decoding a utf8 sequence within bounds
+   //
+   // Decodes one code point starting at `i`, never reading at or past `last`,
+   // and advances `i` past it. An invalid or truncated sequence decodes as
+   // U+FFFD, the replacement character, and `i` advances past the bytes it
+   // rejected, so decoding resumes at the next byte that may start a
+   // sequence. Returns false when the sequence was invalid or truncated.
+   ////////////////////////////////////////////////////////////////////////////
+   namespace detail
+   {
+      inline bool decode_one(char const*& i, char const* last, char32_t& cp)
+      {
+         char const* first = i;
+         char32_t state = utf8_accept;
+         while (i != last)
+         {
+            state = decode_utf8(state, cp, uint8_t(*i++));
+            if (state == utf8_accept)
+               return true;
+            if (state == utf8_reject)
+            {
+               // A byte that cannot continue the sequence may start the
+               // next one: give it back, unless it is the first byte.
+               if (i - first > 1)
+                  --i;
+               cp = 0xFFFD;
+               return false;
+            }
+         }
+         cp = 0xFFFD; // truncated
+         return false;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Converting utf8 to u32string. Invalid or truncated sequences become
+   // U+FFFD.
    ////////////////////////////////////////////////////////////////////////////
    inline std::u32string to_utf32(std::string_view s)
    {
       std::u32string s32;
-      char const* last = s.data() + s.size();
-      char32_t state = 0;
+      s32.reserve(s.size());
+      char const* i = s.data();
+      char const* last = i + s.size();
       char32_t cp;
-      for (char const* i = s.data(); i != last; ++i)
+      while (i != last)
       {
-         while (decode_utf8(state, cp, uint8_t(*i)))
-            i++;
+         detail::decode_one(i, last, cp);
          s32.push_back(cp);
       }
-      if (state == utf8_reject)
-         throw std::runtime_error{"Error: Invalid utf8."};
       return s32;
    }
 
@@ -263,15 +301,15 @@ namespace cycfi
    ////////////////////////////////////////////////////////////////////////////
    inline bool is_valid_utf8(std::string_view s)
    {
-      char const* last = s.data() + s.size();
-      char32_t state = 0;
+      char const* i = s.data();
+      char const* last = i + s.size();
       char32_t cp;
-      for (char const* i = s.data(); i != last; ++i)
+      while (i != last)
       {
-         while (decode_utf8(state, cp, uint8_t(*i)))
-            i++;
+         if (!detail::decode_one(i, last, cp))
+            return false;
       }
-      return state != utf8_reject;
+      return true;
    }
 }
 
